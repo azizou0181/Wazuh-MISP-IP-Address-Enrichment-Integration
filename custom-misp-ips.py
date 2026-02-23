@@ -315,7 +315,6 @@ def query_api(ips: dict, misp_url: str, api_key: str) -> dict:
     rest_search_payload = {
         "value": list(ips.values()),
         "type": ["ip-src", "ip-dst", "ip"],
-        "to_ids": 1,
         "includeEventTags": 0,
         "includeProposals": 0,
         "includeContext": 0,
