@@ -471,17 +471,20 @@ def query_api(ips: dict, misp_url: str, api_key: str) -> dict:
         )
         send_msg(alert_output)
         raise Exception("# Error: MISP API request rate limit reached")
+        sys.exit(0)
 
     if response.status_code == 403:
         alert_output["misp_fortigate_ips"]["error"] = response.status_code
         alert_output["misp_fortigate_ips"]["description"] = "Error: Check credentials"
         send_msg(alert_output)
         raise Exception("# Error: MISP credentials, required privileges error")
+        sys.exit(0)
 
     alert_output["misp_fortigate_ips"]["error"] = response.status_code
     alert_output["misp_fortigate_ips"]["description"] = "Error: API request fail"
     send_msg(alert_output)
     raise Exception("# Error: MISP API request failed")
+    sys.exit(0)
 
 
 def send_msg(msg: dict, agent: dict = None) -> None:
