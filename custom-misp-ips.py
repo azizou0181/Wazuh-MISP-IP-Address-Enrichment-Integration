@@ -111,8 +111,11 @@ def process_args(args) -> None:
             options_file_location = args[idx]
             break
 
-    # Load options JSON
-    json_options = get_json_options(options_file_location)
+    # Load options JSON (always end up with a dict)
+    if not options_file_location:
+        json_options = {}
+    else:
+        json_options = get_json_options(options_file_location) or {}
     debug(f"# Opening options file at '{options_file_location}' with '{json_options}'")
 
     if "timeout" in json_options:
@@ -470,20 +473,17 @@ def query_api(ips: dict, misp_url: str, api_key: str) -> dict:
             "Error: API request rate limit reached"
         )
         send_msg(alert_output)
-        raise Exception("# Error: MISP API request rate limit reached")
         sys.exit(0)
 
     if response.status_code == 403:
         alert_output["misp_fortigate_ips"]["error"] = response.status_code
         alert_output["misp_fortigate_ips"]["description"] = "Error: Check credentials"
         send_msg(alert_output)
-        raise Exception("# Error: MISP credentials, required privileges error")
         sys.exit(0)
 
     alert_output["misp_fortigate_ips"]["error"] = response.status_code
     alert_output["misp_fortigate_ips"]["description"] = "Error: API request fail"
     send_msg(alert_output)
-    raise Exception("# Error: MISP API request failed")
     sys.exit(0)
 
 
